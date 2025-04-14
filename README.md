@@ -18,3 +18,12 @@ In this project, we use MCP to expose tools that Semantic Kernel can consume, en
 - Simplify development with a standardized protocol for tool integration.
 
 This repository provides a practical example of how to combine these technologies, complete with sample code to get you started.
+
+## Prerequisites
+
+Before diving into the code, ensure you have the following:
+- **.NET SDK** (version 8.0 or later recommended).
+- A valid **OpenAI API key** (or another LLM provider compatible with Semantic Kernel).
+- The **ModelContextProtocol** NuGet package.
+- Basic familiarity with C# and Semantic Kernel concepts.
+- (Optional) An MCP server to test with, such as the example ["Everything" MCP server](https://mcp.so/server/server-everything) for demo purposes.
