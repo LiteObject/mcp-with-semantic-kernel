@@ -27,3 +27,52 @@ Before diving into the code, ensure you have the following:
 - The **ModelContextProtocol** NuGet package.
 - Basic familiarity with C# and Semantic Kernel concepts.
 - (Optional) An MCP server to test with, such as the example ["Everything" MCP server](https://mcp.so/server/server-everything) for demo purposes.
+
+## Step-by-Step Guide
+
+This section walks you through the process of integrating MCP tools with Semantic Kernel, as implemented in this repository.
+
+### Step 1: Set Up Your Project
+
+1. Clone this repository:
+
+    ```bash
+    git clone https://github.com/LiteObject/mcp-with-semantic-kernel.git
+    cd mcp-with-semantic-kernel
+    ```
+
+2. Restore dependencies:
+    
+    ```bash
+    dotnet restore
+    ```
+
+3. Configure your OpenAI API key (or other LLM credentials) using environment variables or user secrets:
+
+    ```bash
+    dotnet user-secrets set "OpenAI:ApiKey" "your-api-key"
+    dotnet user-secrets set "OpenAI:ChatModelId" "gpt-4o"
+    ```
+    
+### Step 2: Connect to an MCP Server
+
+The project includes code to connect to an MCP server using the `ModelContextProtocol` package. The MCP client retrieves available tools from the server, which can then be used by Semantic Kernel.
+
+Example code (see `mcp-with-semantic-kernel/src/Program.cs`):
+
+```csharp
+using ModelContextProtocol;
+
+var mcpConfig = new McpServerConfig
+{
+    Id = "everything",
+    Name = "Everything",
+    TransportType = TransportTypes.Sse,
+    Location = "http://localhost:8931"
+};
+
+var mcpClient = await McpClientFactory.CreateAsync(mcpConfig);
+var tools = await mcpClient.ListToolsAsync();
+```
+
+This snippet establishes a connection to an MCP server (e.g., the "Everything" demo server) and fetches its available tools.
