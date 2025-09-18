@@ -5,11 +5,13 @@ This repository demonstrates how to integrate Model Context Protocol (MCP) tools
 ## Quick Start - Running the Demo
 
 ### Prerequisites
-- **.NET SDK** (version 9.0 or later)
-- **Node.js and npm** (required only for external MCP servers like GitHub and Everything servers)
-- A valid **OpenAI API key** (optional - only needed for Semantic Kernel integration)
+- **.NET SDK** (version 9.0 or later - uses preview version features)
+- **Node.js and npm** (optional - only required for external MCP servers like GitHub and Everything)
+- **OpenAI API key** (optional - only needed for Semantic Kernel integration)
+- **ModelContextProtocol** NuGet package (version 0.1.0-preview.8 - automatically included)
+- Basic familiarity with C# and Semantic Kernel concepts
 
-> **Note**: Node.js is needed because the demo uses external MCP servers (GitHub, Everything) that are published as Node.js packages. You can run the demo with only the local .NET MCP server if you prefer to avoid Node.js dependencies.
+> **Note**: Node.js is needed only for external MCP servers (GitHub, Everything) that are published as Node.js packages. The demo works perfectly with just the local .NET MCP server, avoiding Node.js dependencies entirely.
 
 ### 1. Clone and Build
 ```bash
@@ -32,7 +34,7 @@ dotnet run --project src/Demo.MCP.Client
 
 The application will:
 1. **Automatically connect to enabled MCP servers** (configured in appsettings.json)
-2. **List available tools** from each connected server (23 tools from local server)
+2. **List available tools** from each connected server (see Local MCP Server Tools section)
 3. **Demonstrate tool execution** with sample calls (Echo tool test)
 4. **Start interactive mode** where you can test commands
 
@@ -44,9 +46,7 @@ For the simplest setup that doesn't require Node.js, the demo is pre-configured 
 dotnet run --project src/Demo.MCP.Client
 ```
 
-The local server includes 23 built-in tools for testing.
-
->No need for a separate server - it starts automatically!
+The local server includes comprehensive testing tools (see Local MCP Server Tools section).
 
 ### 5. Interactive Commands
 Once the client is running, try these commands:
@@ -65,7 +65,7 @@ Once the client is running, try these commands:
 - Use the exact parameter names as defined in the tool (e.g., "a" and "b" for Add tool)
 
 ### 6. Enable External Servers (Optional)
-To test with GitHub and Everything servers, edit `src/Demo.MCP.Client/appsettings.json`:
+To test with GitHub and Everything servers, edit `src/Demo.MCP.Client/appsettings.json` to enable them (see Configuration section for full server settings):
 ```json
 {
   "McpServers": {
@@ -119,31 +119,6 @@ src/
     └── Program.cs               # MCP server using stdio transport
 ```
 
-## Detailed Prerequisites
-
-Before diving into the code, ensure you have the following:
-- **.NET SDK** (version 9.0 or later - uses preview version).
-- **Node.js and npm** (only required for external MCP servers - GitHub and Everything servers are Node.js packages)
-- A valid **OpenAI API key** (optional - only for Semantic Kernel integration).
-- The **ModelContextProtocol** NuGet package (version 0.1.0-preview.8).
-- Basic familiarity with C# and Semantic Kernel concepts.
-
-### Running Without Node.js
-The demo is pre-configured to work without Node.js by using only the local .NET MCP server:
-1. Local server starts automatically when the client runs
-2. External servers are disabled by default in `appsettings.json`:
-```json
-{
-  "McpServers": {
-    "github": { "Enabled": false },
-    "everything": { "Enabled": false },
-    "local": { "Enabled": true }
-  }
-}
-```
-
-This provides 23 built-in tools for comprehensive testing without external dependencies.
-
 ## Step-by-Step Guide
 
 This section walks you through the process of integrating MCP tools with Semantic Kernel, as implemented in this repository.
@@ -163,7 +138,7 @@ This section walks you through the process of integrating MCP tools with Semanti
     dotnet restore
     ```
 
-3. Configure your OpenAI API key (optional - only for Semantic Kernel integration):
+3. Configure your OpenAI API key (optional - see Prerequisites for when this is needed):
 
     ```bash
     dotnet user-secrets set "OpenAI:ApiKey" "your-api-key" --project src/Demo.MCP.Client
@@ -218,15 +193,8 @@ The client automatically starts and manages the local MCP server using relative 
 }
 ```
 
-### Smart Path Resolution
-The application includes intelligent path resolution that:
-- Automatically finds the repository root
-- Resolves relative paths at runtime  
-- Works regardless of where you run the application
-- Is portable across different machines and users
-
 ### Available MCP Servers
-- **Local Server**: .NET MCP server with 23 built-in tools (enabled by default)
+- **Local Server**: .NET MCP server with comprehensive built-in tools (enabled by default)
 - **GitHub Server**: Provides GitHub API access (disabled by default)
 - **Everything Server**: Demo server with various tools (disabled by default)
 
@@ -270,7 +238,7 @@ The default and most common transport for local MCP servers.
 - Server must be on the same machine as client
 - One client per server instance
 
-#### 2. **HTTP/HTTPS** (Future Support)
+#### 2. **HTTP/HTTPS**
 Network-based transport for remote MCP servers.
 
 **How it works:** Client connects to a server exposed via HTTP endpoint.
@@ -297,7 +265,7 @@ Network-based transport for remote MCP servers.
 - Requires network setup and security considerations
 - Higher latency than local transports
 
-#### 3. **WebSocket** (Potential Future)
+#### 3. **WebSocket**
 Real-time bidirectional communication.
 
 **Use cases:**
@@ -329,67 +297,11 @@ This demo uses **Stdio transport** for all servers:
 
 The Stdio transport was chosen for simplicity and security, as it doesn't expose any network endpoints and works consistently across platforms.
 
-## Features
-
-### Enhanced Architecture
-- **Robust Configuration Management**: Hierarchical configuration with validation and smart path resolution
-- **Advanced Error Handling**: Comprehensive retry logic with exponential backoff
-- **Structured Logging**: Serilog integration with file and console output
-- **Interactive CLI**: Rich command-line interface for testing and exploration
-
-### Core MCP Features (No API Key Required)
-- **Multi-server support** - Connect to multiple MCP servers simultaneously  
-- **Automatic server management** - Local server starts automatically with smart path resolution
-- **Tool discovery** - List available tools from each server (23 tools from local server)
-- **Tool execution** - Call MCP tools with parameters and see results
-- **Interactive CLI** - Command-line interface for testing and exploration
-- **Error handling** - Robust error handling with retry logic and detailed logging
-- **Comprehensive logging** - Structured logging for debugging and monitoring
-
-### Advanced Features (OpenAI API Key Required)
-- **Semantic Kernel integration** - Convert MCP tools to SK functions automatically
-- **AI-powered tool orchestration** - Let AI decide which tools to use based on context
-- **Natural language queries** - Ask questions in plain English and get AI-driven responses
-
-### Local MCP Server Tools (23 Available)
-**Calculator Tools:**
-- **Add** - Adds two numbers (parameters: `a`, `b`)
-- **Subtract** - Subtracts second from first (parameters: `a`, `b`) 
-- **Multiply** - Multiplies two numbers (parameters: `a`, `b`)
-- **Divide** - Divides first by second (parameters: `a`, `b`)
-- **Power** - Calculates power (parameters: `baseNumber`, `exponent`)
-- **SquareRoot** - Square root calculation (parameters: `number`)
-
-**System Information:**  
-- **GetSystemInfo** - Hardware and OS information (no parameters)
-- **GetEnvironmentVariables** - Environment variable access (no parameters)
-- **GetCurrentDirectory** - Working directory information (no parameters)
-- **GetDateTime** - Current system date and time (no parameters)
-- **GenerateGuid** - GUID generation (no parameters)
-
-**File System Operations:**
-- **FileExists** - Check if files exist (parameters: `filePath`)
-- **ListFiles** - Directory listing with pattern filtering (parameters: `directoryPath`, `pattern`)
-
-**Text Processing:**
-- **ToUpperCase** - Case conversion to upper (parameters: `text`)
-- **ToLowerCase** - Case conversion to lower (parameters: `text`)
-- **TrimWhitespace** - Whitespace removal (parameters: `text`)
-- **ReverseString** - String reversal (parameters: `text`)
-- **CountTextStats** - Word, character, and line counting (parameters: `text`)
-- **ExtractPattern** - Regex pattern extraction (parameters: `text`, `pattern`)
-- **EncodeBase64** - Base64 encoding (parameters: `text`)
-- **DecodeBase64** - Base64 decoding (parameters: `encodedText`)
-
-**Utility Tools:**
-- **Echo** - Simple echo for testing connectivity (parameters: `name`)
-- **GenerateRandomNumber** - Random number generation (parameters: `min`, `max`)
-
 ## Troubleshooting
 
 ### Common Issues
 1. **"Unknown tool 'add'" or similar errors**
-   - Tool names are **case-sensitive** - use "Add" not "add"
+   - Tool names are **case-sensitive** - use "Add" not "add" (see Interactive Commands section for examples)
    - Use exact tool names as shown in `list local` command
    - Check parameter names match the tool definition exactly
 
@@ -404,9 +316,9 @@ The Stdio transport was chosen for simplicity and security, as it doesn't expose
    - Check parameter names match those expected by the tool (use `list local` to see tool descriptions)
 
 4. **"OpenAI API key not configured"** 
-   - This is a warning, not an error - the core MCP functionality works without it
+   - This is a warning, not an error - core MCP functionality works without it (see Prerequisites)
    - Only affects Semantic Kernel integration features
-   - All 23 local tools work without an API key
+   - All local tools work without an API key
 
 5. **Build errors**
    - Run `dotnet restore` to ensure all packages are installed
@@ -420,7 +332,7 @@ The Stdio transport was chosen for simplicity and security, as it doesn't expose
 
 ### Correct Command Examples
 ```bash
-# Correct (case-sensitive tool names)
+# Correct (case-sensitive tool names - see Interactive Commands section)
 > call local Add {"a": 5, "b": 3}
 > call local Echo {"name": "World"}
 > call local SquareRoot {"number": 16}
