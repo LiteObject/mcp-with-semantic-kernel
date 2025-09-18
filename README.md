@@ -65,12 +65,20 @@ Once the client is running, try these commands:
 - Use the exact parameter names as defined in the tool (e.g., "a" and "b" for Add tool)
 
 ### 6. Enable External Servers (Optional)
-To test with GitHub and Everything servers, edit `src/Demo.MCP.Client/appsettings.json` to enable them (see Configuration section for full server settings):
+To test with GitHub and Everything servers, edit `src/Demo.MCP.Client/appsettings.json` to enable them. **Important**: Only change the `"Enabled"` property to `true` for each server you want to activate - do not replace the entire configuration objects.
+
+Example change (see Configuration section for full server settings):
 ```json
 {
   "McpServers": {
-    "github": { "Enabled": true },
-    "everything": { "Enabled": true },
+    "github": { 
+      "Enabled": true    // Change this from false to true
+      // Keep all other properties unchanged
+    },
+    "everything": { 
+      "Enabled": true    // Change this from false to true  
+      // Keep all other properties unchanged
+    },
     "local": { "Enabled": true }
   }
 }
@@ -149,7 +157,7 @@ This section walks you through the process of integrating MCP tools with Semanti
 
 The project includes code to connect to an MCP server using the `ModelContextProtocol` package. The MCP client retrieves available tools from the server, which can then be used by Semantic Kernel.
 
-Example code (see `src/Demo.MCP.Client/Program.cs`):
+Conceptual example (actual implementation in `src/Demo.MCP.Client/Services/McpClientService.cs`):
 
 ```csharp
 using ModelContextProtocol;
@@ -167,7 +175,7 @@ var mcpClient = await McpClientFactory.CreateAsync(mcpConfig);
 var tools = await mcpClient.ListToolsAsync();
 ```
 
-This snippet establishes a connection to an MCP server (e.g., the "Everything" demo server) and fetches its available tools.
+This snippet demonstrates the general pattern for establishing a connection to an MCP server (e.g., the "Everything" demo server) and fetching its available tools. The actual implementation includes additional error handling, retry logic, and configuration management.
 
 ## Configuration
 
@@ -238,7 +246,7 @@ The default and most common transport for local MCP servers.
 - Server must be on the same machine as client
 - One client per server instance
 
-#### 2. **HTTP/HTTPS**
+#### 2. **HTTP/HTTPS** (Not Implemented in This Demo)
 Network-based transport for remote MCP servers.
 
 **How it works:** Client connects to a server exposed via HTTP endpoint.
@@ -265,7 +273,7 @@ Network-based transport for remote MCP servers.
 - Requires network setup and security considerations
 - Higher latency than local transports
 
-#### 3. **WebSocket**
+#### 3. **WebSocket** (Not Implemented in This Demo)
 Real-time bidirectional communication.
 
 **Use cases:**
@@ -273,7 +281,7 @@ Real-time bidirectional communication.
 - Long-running connections
 - Push notifications
 
-#### 4. **Named Pipes** (Platform-specific)
+#### 4. **Named Pipes** (Not Implemented in This Demo)
 Inter-process communication on the same machine.
 
 **Use cases:**
